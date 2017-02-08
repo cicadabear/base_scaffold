@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.iutils.sys.dao.IRoleDao">
+
+	<sql id="roleColumns">
+    	a.id,
+    	a.role,
+    	a.name,
+    	a.organization_id as "organizationId",
+		a.resource_ids as "resourceIdsStr",
+		a.available,
+		a.data_scope as "dataScope",
+		a.remarks,
+		a.create_date as "createDate",
+		a.update_date as "updateDate",
+		a.status as "status",
+		b.name as "organization.name"
+    </sql>
+
+	<sql id="roleJoins">
+		LEFT JOIN sys_organization b ON b.id = a.organization_id
+	</sql>
+
+    <select id="get" resultType="cn.iutils.sys.entity.Role">
+		SELECT 
+			<include refid="roleColumns"/>
+		FROM sys_role a
+		<include refid="roleJoins"/>
+		WHERE a.id = #{id}
+	</select>
+
+	<select id="findList" resultType="cn.iutils.sys.entity.Role">
+		SELECT
+		<include refid="roleColumns"/>
+		FROM sys_role a
+		<include refid="roleJoins"/>
+		<where>
+			a.status='0' and a.organization_id in(select id from sys_organization where parent_ids like '%${user.organizationId}/%' or id=#{user.organizationId})
+		</where>
+	</select>
+
+	<select id="count" resultType="int">
+		SELECT count(1) FROM sys_role a
+		<where>
+			a.status='0'
+			<if test="page.entity != null">
+				and a.organization_id in(select id from sys_organization where parent_ids like '%${page.entity.user.organizationId}/%' or id=#{page.entity.user.organizationId})
+			</if>
+		</where>
+	</select>
+
+	<select id="findPage" resultType="cn.iutils.sys.entity.Role">
+		SELECT <include refid="roleColumns"/> FROM sys_role a <include refid="roleJoins"/>
+		<where>
+			a.status='0'
+			<if test="page.entity != null">
+				and a.organization_id in(select id from sys_organization where parent_ids like '%${page.entity.user.organizationId}/%' or id=#{page.entity.user.organizationId})
+			</if>
+		</where>
+		<if test="page.orderBy!=''">
+			ORDER BY ${page.orderBy} LIMIT ${page.pageNo*page.pageSize},${page.pageSize}
+		</if>
+	</select>
+
+	<!-- 获取权限资源ID -->
+	<select id="getRoles" resultType="cn.iutils.sys.entity.Role">
+		select id,resource_ids as "resourceIdsStr" from sys_role where status='0'and available='1' and id in(
+		<foreach collection="roleIds" item="item" separator=",">
+			#{item}
+		</foreach>
+		)
+	</select>
+	
+	<insert id="insert">
+		insert into sys_role(role,name,organization_id,resource_ids,data_scope,available,create_by,create_date,remarks)
+	    values(#{role},#{name},#{organizationId},#{resourceIdsStr},#{dataScope},#{available},#{createBy},#{createDate},#{remarks})
+	</insert>
+	
+	<update id="update">
+		update sys_role set role=#{role},name=#{name},organization_id=#{organizationId},resource_ids=#{resourceIdsStr},
+		update_by=#{updateBy},update_date=#{updateDate},remarks=#{remarks},data_scope=#{dataScope},available=#{available} where id=#{id}
+	</update>
+	
+	<delete id="delete">
+		update sys_role set status='1' where id=#{id}
+	</delete>
+
+</mapper>

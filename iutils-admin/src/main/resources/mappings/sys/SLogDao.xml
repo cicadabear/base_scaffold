@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.iutils.sys.dao.SLogDao">
+
+    <sql id="LogColumns">
+            a.id as "id",
+            a.menu as "menu",
+            a.remote_addr as "remoteAddr",
+            a.request_uri as "requestUri",
+            a.method as "method",
+            a.params as "params",
+            a.user_agent as "userAgent",
+            a.exception as "exception",
+            a.time_consuming as "timeConsuming",
+            a.create_by as "createBy",
+            a.create_date as "createDate"
+    </sql>
+
+    <sql id="logJoins">
+        LEFT JOIN sys_user b ON b.id = a.create_by
+    </sql>
+
+    <select id="get" resultType="cn.iutils.sys.entity.SLog">
+        SELECT
+        <include refid="LogColumns"/>
+        FROM sys_slog a
+        WHERE a.id = #{id}
+    </select>
+
+    <select id="findList" resultType="cn.iutils.sys.entity.SLog">
+        SELECT
+        <include refid="LogColumns"/>
+        FROM sys_slog a
+    </select>
+
+    <select id="count" resultType="int">
+        SELECT count(1) FROM sys_slog a
+        <include refid="logJoins"/>
+        <where>
+            <if test="page.entity.username!=null and page.entity.username!=''">
+                and b.username LIKE
+                <if test="page.entity.dbType == 'oracle'">'%'||#{page.entity.username}||'%')</if>
+                <if test="page.entity.dbType == 'mssql'">'%'+#{page.entity.username}+'%')</if>
+                <if test="page.entity.dbType == 'mysql'">CONCAT('%',#{page.entity.username},'%')</if>
+            </if>
+        </where>
+    </select>
+
+    <select id="findPage" resultType="cn.iutils.sys.entity.SLog">
+        SELECT
+        <include refid="LogColumns"/>
+        ,b.username as "user.username"
+        FROM sys_slog a
+        <include refid="logJoins"/>
+        <where>
+            <if test="page.entity.username!=null and page.entity.username!=''">
+                and b.username LIKE
+                <if test="page.entity.dbType == 'oracle'">'%'||#{page.entity.username}||'%')</if>
+                <if test="page.entity.dbType == 'mssql'">'%'+#{page.entity.username}+'%')</if>
+                <if test="page.entity.dbType == 'mysql'">CONCAT('%',#{page.entity.username},'%')</if>
+            </if>
+        </where>
+        <if test="page.orderBy!=''">
+            ORDER BY ${page.orderBy} LIMIT ${page.pageNo*page.pageSize},${page.pageSize}
+        </if>
+    </select>
+
+    <!-- 批量添加 -->
+    <insert id="saveBatch">
+        insert into sys_slog(
+        menu,
+        remote_addr,
+        request_uri,
+        method,
+        params,
+        user_agent,
+        exception,
+        time_consuming,
+        create_by,
+        create_date
+        )
+        values
+        <foreach collection="logs" item="item" separator=",">
+            (
+            #{item.menu},
+            #{item.remoteAddr},
+            #{item.requestUri},
+            #{item.method},
+            #{item.params},
+            #{item.userAgent},
+            #{item.exception},
+            #{item.timeConsuming},
+            #{item.createBy},
+            #{item.createDate}
+            )
+        </foreach>
+
+    </insert>
+
+    <!-- 批量删除 -->
+    <delete id="deleteAll">
+        delete from sys_slog where id in(
+        <foreach collection="ids" item="item" separator=",">
+            #{item}
+        </foreach>
+        )
+    </delete>
+</mapper>

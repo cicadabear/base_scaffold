@@ -1,0 +1,69 @@
+/* 主页左侧菜单部分 */
+.ztree * {font-size: 10pt;font-family:"Microsoft Yahei",Verdana,Simsun,"Segoe UI Web Light","Segoe UI Light","Segoe UI Web Regular","Segoe UI","Segoe UI Symbol","Helvetica Neue",Arial}
+.ztree li ul{ margin:0; padding:0px 0 0 8px;}
+.ztree li {line-height:35px;}
+.ztree li a {width:100%;height:35px;line-height:35px;padding-top:0px;border-bottom: 1px solid #ddd;}
+.ztree li a:hover {text-decoration:none; background-color: #E7E7E7;}
+.ztree li a span.button.switch {visibility:hidden;float: right;}
+.ztree.showIcon li a span.button.switch {visibility:visible}
+.ztree li a.curSelectedNode {background-color:#D4D4D4;border:0;height:35px;}
+.ztree li span {line-height:35px;}
+.ztree li span.button {margin-top: 9px;}
+.ztree li span.button.switch {width: 16px;height: 16px;}
+.ztree li span.button.ico_open{margin-right:2px;vertical-align:text-bottom;}
+.ztree li span.button.ico_close{margin-right:2px;vertical-align:text-bottom;}
+.ztree li span.button.ico_docu{margin-right:2px;vertical-align:initial;}
+
+
+.ztree li a.level0 span {font-size: 11pt;}
+.ztree li span.button {background-image:url("../images/left_menuForOutLook.png"); *background-image:url("../images/left_menuForOutLook.gif")}
+.ztree li span.button.switch.level0 {width: 20px; height:20px}
+.ztree li span.button.switch.level1 {width: 20px; height:20px}
+.ztree li span.button.noline_open {background-position: 0 0;}
+.ztree li span.button.noline_close {background-position: -18px 0;}
+/*.ztree li span.button.noline_open.level0 {background-position: 0 -18px;}*/
+/*.ztree li span.button.noline_close.level0 {background-position: -18px -18px;}*/
+.ztree li span.button.noline_open.level0 {background-position: 0 0;}
+.ztree li span.button.noline_close.level0 {background-position: -18px 0;}
+[id$="_ul"]{background-color:#eee;}
+.am-footer{padding: 1em 10em;}
+/*菜单收缩切换*/
+.dislpayArrow{position: absolute;top: 0;bottom: 0;left:185px;width:0px; height:100%;z-index:99999;}
+.dislpayArrow a{ position:absolute; display:block; width:17px; height:61px;top:50%; margin-top:-30px;outline:none}
+.dislpayArrow a.open{ background-position:0 -61px}
+.dislpayArrow a:hover{ text-decoration:none; background-position:right 0}
+.dislpayArrow a.open:hover{background-position:right -61px}
+/*tabs样式*/
+.am-tabs-nav{
+    background-color: #F3F3F3;
+    overflow:hidden;
+    height: 40px;
+}
+.am-tabs-nav li {
+    position: relative;
+    z-index: 1;
+    font-size: 1.4rem;
+}
+.am-tabs-nav .am-icon-close {
+    position: absolute;
+    top: 0;
+    right: 10px;
+    color: #888;
+    cursor: pointer;
+    z-index: 100;
+}
+.am-tabs-nav .am-icon-close:hover {
+    color: #333;
+}
+.am-tabs-nav .am-icon-close ~ a {
+    padding-right: 25px!important;
+}
+.am-tabs-bd{
+    border: none;
+}
+.am-tabs-bd .am-tab-panel{
+    padding:0;
+}
+.am-nav-tabs>li>a{
+    line-height: 1.93;
+}

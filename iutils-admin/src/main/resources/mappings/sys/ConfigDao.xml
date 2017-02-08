@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.iutils.sys.dao.ConfigDao">
+
+    <sql id="ConfigColumns">
+        a.id as "id",
+        a.sys_name as "sysName",
+        a.module_name as "moduleName",
+        a.config_name as "configName",
+        a.config_value as "configValue",
+        a.create_by as "createBy",
+        a.create_date as "createDate",
+        a.update_by as "updateBy",
+        a.update_date as "updateDate",
+        a.remarks as "remarks",
+        a.status as "status"
+    </sql>
+
+    <sql id="ConfigJoins">
+
+    </sql>
+
+    <select id="get" resultType="cn.iutils.sys.entity.Config">
+        SELECT
+        <include refid="ConfigColumns"/>
+        FROM sys_config a
+        WHERE a.id = #{id}
+    </select>
+
+    <select id="findList" resultType="cn.iutils.sys.entity.Config">
+        SELECT
+        <include refid="ConfigColumns"/>
+        FROM sys_config a
+    </select>
+
+    <select id="count" resultType="int">
+        SELECT count(1) FROM sys_config a
+        <where>
+          <if test="page.key!=null and page.key!=''">
+              and a.sys_name like
+              <if test="page.entity.dbType == 'oracle'">'%'||#{page.key}||'%')</if>
+              <if test="page.entity.dbType == 'mssql'">'%'+#{page.key}+'%')</if>
+              <if test="page.entity.dbType == 'mysql'">CONCAT('%',#{page.key},'%')</if>
+              OR a.module_name like
+              <if test="page.entity.dbType == 'oracle'">'%'||#{page.key}||'%')</if>
+              <if test="page.entity.dbType == 'mssql'">'%'+#{page.key}+'%')</if>
+              <if test="page.entity.dbType == 'mysql'">CONCAT('%',#{page.key},'%')</if>
+              OR a.config_name like
+              <if test="page.entity.dbType == 'oracle'">'%'||#{page.key}||'%')</if>
+              <if test="page.entity.dbType == 'mssql'">'%'+#{page.key}+'%')</if>
+              <if test="page.entity.dbType == 'mysql'">CONCAT('%',#{page.key},'%')</if>
+          </if>
+        </where>
+    </select>
+
+    <select id="findPage" resultType="cn.iutils.sys.entity.Config">
+        SELECT <include refid="ConfigColumns"/> FROM sys_config a
+        <where>
+            <if test="page.key!=null and page.key!=''">
+                and a.sys_name like
+                <if test="page.entity.dbType == 'oracle'">'%'||#{page.key}||'%')</if>
+                <if test="page.entity.dbType == 'mssql'">'%'+#{page.key}+'%')</if>
+                <if test="page.entity.dbType == 'mysql'">CONCAT('%',#{page.key},'%')</if>
+                OR a.module_name like
+                <if test="page.entity.dbType == 'oracle'">'%'||#{page.key}||'%')</if>
+                <if test="page.entity.dbType == 'mssql'">'%'+#{page.key}+'%')</if>
+                <if test="page.entity.dbType == 'mysql'">CONCAT('%',#{page.key},'%')</if>
+                OR a.config_name like
+                <if test="page.entity.dbType == 'oracle'">'%'||#{page.key}||'%')</if>
+                <if test="page.entity.dbType == 'mssql'">'%'+#{page.key}+'%')</if>
+                <if test="page.entity.dbType == 'mysql'">CONCAT('%',#{page.key},'%')</if>
+            </if>
+        </where>
+        <if test="page.orderBy!=''">
+            ORDER BY ${page.orderBy} LIMIT ${page.pageNo*page.pageSize},${page.pageSize}
+        </if>
+    </select>
+
+    <insert id="insert">
+        insert into sys_config(
+                sys_name,
+                module_name,
+                config_name,
+                config_value,
+                create_by,
+                create_date,
+                update_by,
+                update_date,
+                remarks,
+                status
+        )
+        values(
+                #{sysName},
+                #{moduleName},
+                #{configName},
+                #{configValue},
+                #{createBy},
+                #{createDate},
+                #{updateBy},
+                #{updateDate},
+                #{remarks},
+                #{status}
+        )
+    </insert>
+
+    <update id="update">
+        update sys_config set
+                sys_name=#{sysName},
+                module_name=#{moduleName},
+                config_name=#{configName},
+                config_value=#{configValue},
+                create_by=#{createBy},
+                create_date=#{createDate},
+                update_by=#{updateBy},
+                update_date=#{updateDate},
+                remarks=#{remarks},
+                status=#{status}
+        where id=#{id}
+    </update>
+
+    <delete id="delete">
+        delete from sys_config where id=#{id}
+    </delete>
+</mapper>

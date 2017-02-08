@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.iutils.sys.dao.ScheduleJobDao">
+
+    <sql id="ScheduleJobColumns">
+            a.id as "id",
+            a.job_name as "jobName",
+            a.job_group as "jobGroup",
+            a.cron as "cron",
+            a.bean_class as "beanClass",
+            a.is_concurrent as "isConcurrent",
+            a.method_name as "methodName",
+            a.create_by as "createBy",
+            a.create_date as "createDate",
+            a.update_by as "updateBy",
+            a.update_date as "updateDate",
+            a.remarks as "remarks",
+            a.status as "status"
+    </sql>
+
+    <select id="get" resultType="cn.iutils.sys.entity.ScheduleJob">
+        SELECT
+        <include refid="ScheduleJobColumns"/>
+        FROM sys_schedule_job a
+        WHERE a.id = #{id}
+    </select>
+
+    <select id="findList" resultType="cn.iutils.sys.entity.ScheduleJob">
+        SELECT
+        <include refid="ScheduleJobColumns"/>
+        FROM sys_schedule_job a
+    </select>
+
+    <select id="count" resultType="int">
+        SELECT count(1) FROM sys_schedule_job a
+        <where>
+            <if test="page.entity.jobName!=null and page.entity.jobName!=''">
+                and a.job_name LIKE
+                <if test="page.entity.dbType == 'oracle'">'%'||#{page.entity.jobName}||'%')</if>
+                <if test="page.entity.dbType == 'mssql'">'%'+#{page.entity.jobName}+'%')</if>
+                <if test="page.entity.dbType == 'mysql'">CONCAT('%',#{page.entity.jobName},'%')</if>
+            </if>
+        </where>
+    </select>
+
+    <select id="findPage" resultType="cn.iutils.sys.entity.ScheduleJob">
+        SELECT
+        <include refid="ScheduleJobColumns"/>
+        FROM sys_schedule_job a
+        <where>
+            <if test="page.entity.jobName!=null and page.entity.jobName!=''">
+                and a.job_name LIKE
+                <if test="page.entity.dbType == 'oracle'">'%'||#{page.entity.jobName}||'%')</if>
+                <if test="page.entity.dbType == 'mssql'">'%'+#{page.entity.jobName}+'%')</if>
+                <if test="page.entity.dbType == 'mysql'">CONCAT('%',#{page.entity.jobName},'%')</if>
+            </if>
+        </where>
+        <if test="page.orderBy!=''">
+            ORDER BY ${page.orderBy} LIMIT ${page.pageNo*page.pageSize},${page.pageSize}
+        </if>
+    </select>
+
+    <insert id="insert">
+        insert into sys_schedule_job(
+                job_name,
+                job_group,
+                cron,
+                bean_class,
+                is_concurrent,
+                method_name,
+                create_by,
+                create_date,
+                update_by,
+                update_date,
+                remarks,
+                status
+        )
+        values(
+            #{jobName},
+            #{jobGroup},
+            #{cron},
+            #{beanClass},
+            #{isConcurrent},
+            #{methodName},
+            #{createBy},
+            #{createDate},
+            #{updateBy},
+            #{updateDate},
+            #{remarks},
+            #{status}
+        )
+    </insert>
+
+    <update id="update">
+        update sys_schedule_job set
+            job_name=#{jobName},
+            job_group=#{jobGroup},
+            cron=#{cron},
+            bean_class=#{beanClass},
+            is_concurrent=#{isConcurrent},
+            method_name=#{methodName},
+            create_by=#{createBy},
+            create_date=#{createDate},
+            update_by=#{updateBy},
+            update_date=#{updateDate},
+            remarks=#{remarks},
+            status=#{status}
+        where id=#{id}
+    </update>
+
+    <delete id="delete">
+        delete from sys_schedule_job where id=#{id}
+    </delete>
+
+    <!-- 更改任务状态 -->
+    <update id="changeJobStatus">
+    	update sys_schedule_job set status=#{status} where id=#{id}
+    </update>
+
+</mapper>

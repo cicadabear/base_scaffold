@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.iutils.sys.dao.UserQiniuDao">
+
+    <sql id="UserQiniuColumns">
+            a.id as "id",
+            a.user_id as "userId",
+            a.domain as "domain",
+            a.access as "access",
+            a.secret as "secret",
+            a.pub as "pub",
+            a.pri as "pri",
+            a.create_by as "createBy",
+            a.create_date as "createDate",
+            a.update_by as "updateBy",
+            a.update_date as "updateDate",
+            a.remarks as "remarks"
+    </sql>
+
+    <select id="get" resultType="cn.iutils.sys.entity.UserQiniu">
+        SELECT
+        <include refid="UserQiniuColumns"/>
+        FROM sys_user_qiniu a
+        WHERE a.id = #{id}
+    </select>
+
+	<select id="getByUser" resultType="cn.iutils.sys.entity.UserQiniu">
+		SELECT
+        <include refid="UserQiniuColumns"/>
+        FROM sys_user_qiniu a
+        WHERE a.user_id = #{userId}
+	</select>
+
+    <insert id="insert">
+        insert into sys_user_qiniu(
+                user_id,
+                domain,
+                access,
+                secret,
+                pub,
+                pri,
+                create_by,
+                create_date,
+                update_by,
+                update_date,
+                remarks
+        )
+        values(
+            #{userId},
+            #{domain},
+            #{access},
+            #{secret},
+            #{pub},
+            #{pri},
+            #{createBy},
+            #{createDate},
+            #{updateBy},
+            #{updateDate},
+            #{remarks}
+        )
+    </insert>
+
+    <update id="update">
+        update sys_user_qiniu set
+            user_id=#{userId},
+            domain=#{domain},
+            access=#{access},
+            secret=#{secret},
+            pub=#{pub},
+            pri=#{pri},
+            create_by=#{createBy},
+            create_date=#{createDate},
+            update_by=#{updateBy},
+            update_date=#{updateDate},
+            remarks=#{remarks}
+        where id=#{id}
+    </update>
+    
+</mapper>

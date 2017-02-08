@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.iutils.sys.dao.IOrganizationDao">
+
+	<sql id="organizationColumns">
+    	a.id,
+    	a.name,
+		a.parent_id as "parentId",
+		a.parent_ids as "parentIds",
+		a.available,
+		a.remarks,
+		a.create_date as "createDate",
+		a.update_date as "updateDate",
+		a.status as "status",
+		b.id as "organization.id",
+		b.name as "organization.name",
+		b.parent_id as "organization.parentId",
+		b.parent_ids as "organization.parentIds"
+    </sql>
+
+	<sql id="organizationJoins">
+		LEFT JOIN sys_organization b ON b.id = a.parent_id
+	</sql>
+
+    <select id="get" resultType="cn.iutils.sys.entity.Organization">
+		SELECT 
+			<include refid="organizationColumns"/>
+		FROM sys_organization a
+		<include refid="organizationJoins"/>
+		WHERE a.id = #{id}
+	</select>
+
+	<select id="findList" resultType="cn.iutils.sys.entity.Organization">
+		SELECT
+			<include refid="organizationColumns"/>
+		FROM sys_organization a
+		<include refid="organizationJoins"/>
+		where a.status='0' and (a.parent_ids like '${user.organization.parentIds}${user.organization.id}/%' or a.id=#{user.organization.id})
+	</select>
+
+	<select id="count" resultType="int">
+		SELECT count(1) FROM sys_organization a
+		WHERE a.status='0'
+		<if test="page.entity != null">
+			and a.parent_id=#{page.entity.id}
+		</if>
+	</select>
+
+	<select id="findPage" resultType="cn.iutils.sys.entity.Organization">
+		SELECT <include refid="organizationColumns"/> FROM sys_organization a <include refid="organizationJoins"/>
+		where a.status='0'
+		<if test="page.entity != null">
+			and a.parent_id=#{page.entity.id}
+		</if>
+		<if test="page.orderBy!=''">
+			ORDER BY ${page.orderBy} LIMIT ${page.pageNo*page.pageSize},${page.pageSize}
+		</if>
+	</select>
+
+	<insert id="insert">
+		insert into sys_organization(name,parent_id,parent_ids,available,create_by,create_date,remarks)
+	    values(#{name},#{parentId},#{parentIds},#{available},#{createBy},#{createDate},#{remarks})
+	</insert>
+	
+	<update id="update">
+		update sys_organization set name=#{name},parent_id=#{parentId},parent_ids=#{parentIds},
+		update_by=#{updateBy},update_date=#{updateDate},remarks=#{remarks},available=#{available} where id=#{id}
+	</update>
+	
+	<delete id="delete">
+		update sys_organization set status='1' where id=#{id}
+	</delete>
+
+</mapper>

@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.iutils.sys.dao.IUserDao">
+	
+	<sql id="userColumns">
+    	a.id,
+    	a.no,
+    	a.organization_id as "organizationId",
+    	a.username,
+    	a.password,
+    	a.salt,
+		a.name,
+		a.role_ids as "roleIdsStr",
+		a.email,
+		a.phone,
+		a.mobile,
+		a.photo,
+		a.locked,
+		a.is_dept,
+		a.remarks,
+		a.create_date as "createDate",
+		a.update_date as "updateDate",
+		a.status as "status",
+		b.id as "organization.id",
+		b.name as "organization.name",
+		b.parent_id as "organization.parentId",
+		b.parent_ids as "organization.parentIds"
+    </sql>
+
+	<sql id="userJoins">
+		LEFT JOIN sys_organization b ON b.id = a.organization_id
+	</sql>
+    
+    <select id="getUserByUserName" resultType="cn.iutils.sys.entity.User">
+		select 
+		<include refid="userColumns"/> 
+		from sys_user a
+		<include refid="userJoins"/>
+		where a.status='0' and a.username=#{username}
+	</select>
+	
+	<select id="get" resultType="cn.iutils.sys.entity.User">
+		SELECT 
+			<include refid="userColumns"/>
+		FROM sys_user a
+		<include refid="userJoins"/>
+		WHERE a.id = #{id}
+	</select>
+
+	<select id="count" resultType="int">
+        SELECT count(1) FROM sys_user a
+        <where>
+			a.status = '0'
+			<if test="page.entity.organizationId != null">
+				and a.organization_id in(select id from sys_organization where parent_ids like '%${page.entity.organizationId}/%' or id=#{page.entity.organizationId})
+			</if>
+			<if test="page.entity.username!=null and page.entity.username!=''">
+	         	and a.username LIKE
+				<if test="page.entity.dbType == 'oracle'">'%'||#{page.entity.username}||'%')</if>
+				<if test="page.entity.dbType == 'mssql'">'%'+#{page.entity.username}+'%')</if>
+				<if test="page.entity.dbType == 'mysql'">CONCAT('%',#{page.entity.username},'%')</if>
+	         </if>
+			<if test="page.entity.name!=null and page.entity.name!=''">
+				and a.name LIKE
+				<if test="page.entity.dbType == 'oracle'">'%'||#{page.entity.name}||'%')</if>
+				<if test="page.entity.dbType == 'mssql'">'%'+#{page.entity.name}+'%')</if>
+				<if test="page.entity.dbType == 'mysql'">CONCAT('%',#{page.entity.name},'%')</if>
+			</if>
+			<if test="page.entity.mobile!=null and page.entity.mobile!=''">
+				and a.mobile LIKE
+				<if test="page.entity.dbType == 'oracle'">'%'||#{page.entity.mobile}||'%')</if>
+				<if test="page.entity.dbType == 'mssql'">'%'+#{page.entity.mobile}+'%')</if>
+				<if test="page.entity.dbType == 'mysql'">CONCAT('%',#{page.entity.mobile},'%')</if>
+			</if>
+        </where>
+    </select>
+    
+    <select id="findPage" resultType="cn.iutils.sys.entity.User">
+		SELECT <include refid="userColumns"/> FROM sys_user a <include refid="userJoins"/>
+		<where>
+			a.status = '0'
+			<if test="page.entity.organizationId != null">
+				and a.organization_id in(select id from sys_organization where parent_ids like '%${page.entity.organizationId}/%' or id=#{page.entity.organizationId})
+			</if>
+			<if test="page.entity.username!=null and page.entity.username!=''">
+				and a.username LIKE
+				<if test="page.entity.dbType == 'oracle'">'%'||#{page.entity.username}||'%')</if>
+				<if test="page.entity.dbType == 'mssql'">'%'+#{page.entity.username}+'%')</if>
+				<if test="page.entity.dbType == 'mysql'">CONCAT('%',#{page.entity.username},'%')</if>
+			</if>
+			<if test="page.entity.name!=null and page.entity.name!=''">
+				and a.name LIKE
+				<if test="page.entity.dbType == 'oracle'">'%'||#{page.entity.name}||'%')</if>
+				<if test="page.entity.dbType == 'mssql'">'%'+#{page.entity.name}+'%')</if>
+				<if test="page.entity.dbType == 'mysql'">CONCAT('%',#{page.entity.name},'%')</if>
+			</if>
+			<if test="page.entity.mobile!=null and page.entity.mobile!=''">
+				and a.mobile LIKE
+				<if test="page.entity.dbType == 'oracle'">'%'||#{page.entity.mobile}||'%')</if>
+				<if test="page.entity.dbType == 'mssql'">'%'+#{page.entity.mobile}+'%')</if>
+				<if test="page.entity.dbType == 'mysql'">CONCAT('%',#{page.entity.mobile},'%')</if>
+			</if>
+		</where>
+		<if test="page.orderBy!=''">
+			 ORDER BY ${page.orderBy} LIMIT ${page.pageNo*page.pageSize},${page.pageSize}
+		</if>
+    </select>
+
+	<insert id="insert">
+		insert into sys_user(no,organization_id, username, password, salt,name,role_ids,email,phone,mobile,photo,locked,is_dept,create_by,create_date,update_by,update_date,remarks)
+	    values(#{no},#{organizationId},#{username},#{password},#{salt},#{name},#{roleIdsStr},#{email},#{phone},#{mobile},#{photo},#{locked},#{isDept},#{createBy},#{createDate},#{updateBy},#{updateDate},#{remarks})
+	</insert>
+	
+	<update id="update">
+		update sys_user set no=#{no},organization_id=#{organizationId},username=#{username},password=#{password},salt=#{salt},role_ids=#{roleIdsStr},locked=#{locked},is_dept=#{isDept}
+		,name=#{name},email=#{email},phone=#{phone},mobile=#{mobile},photo=#{photo},update_by=#{updateBy},update_date=#{updateDate},remarks=#{remarks} where id=#{id}
+	</update>
+	
+	<delete id="delete">
+		update sys_user set status='1' where id=#{id}
+	</delete>
+	
+</mapper>

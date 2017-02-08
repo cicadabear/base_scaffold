@@ -1,0 +1,94 @@
+.error{color:red;}
+.table {
+    width:80%;
+    font-size:14px;
+    color:#333333;
+    text-align:center;
+    border-collapse:collapse;
+    table-layout: fixed;
+}
+.table td,.table th{
+    border:1px solid #333333;
+    padding: 10px;
+}
+
+.message {
+    background: #eee;
+    border: 1px solid #eee;
+    margin: 10px 0;
+    padding: 10px;
+}
+
+.form-group {
+    margin: 10px 0;
+}
+
+.form-group label {
+    width: 130px;
+    float: left;
+}
+
+/* 自定义样式 */
+.ui-tools{
+	padding:8px 10px;
+	border-bottom: 1px solid #ddd;
+}
+.ui-tools form{
+	margin:0;
+}
+/* layer改造部分 */
+.layui-layer{
+	font-family:none;
+}
+
+/* amazeui改造部分 */
+.am-topbar-inverse{
+	border-color:transparent;
+}
+.am-pagination{
+	font-size: 14px;
+    margin:0;
+    padding-bottom: 50px;
+    padding-right: 10px;
+}
+.am-pagination-tip{
+    float: left;
+    clear: both;
+    padding-left: 10px;
+    font-size: 14px;
+    color: #999;
+}
+.am-pagination>li>a, .am-pagination>li>span{
+	padding: .3em 1em;
+}
+[class*=am-u-]{
+	padding:0px;
+}
+.am-btn-group-justify, .am-input-group, .am-table {
+    border-collapse: collapse;
+}
+.am-selected{
+    width: 100%;
+}
+body, button, input, select, textarea {
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: auto;
+    -moz-osx-font-smoothing: grayscale;
+    -moz-font-feature-settings: "liga","kern";
+}
+.layui-layer-btn a{
+    height: auto;
+}
+.auto-select-group .auto-select{
+    width: 200px;
+    float: right;
+    border: none;
+    border: 1px solid #ddd;
+    height: 33px;
+}
+.error-info{
+    font-size: 14px;
+    text-align: center;
+}
+
+
