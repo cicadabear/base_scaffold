@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:oauth="http://www.springframework.org/schema/security/oauth2"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:security="http://www.springframework.org/schema/security"
+       xmlns:tx="http://www.springframework.org/schema/tx" xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/security/oauth2
+       http://www.springframework.org/schema/security/spring-security-oauth2.xsd
+       http://www.springframework.org/schema/util
+       http://www.springframework.org/schema/util/spring-util.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+
+    <!--<util:properties location="persistence.properties,jiangren-oauth.properties"/>-->
+    <context:property-placeholder
+            location="classpath:jiangren-oauth.properties,classpath*:jiangren-profile.properties"/>
+
+    <!--annotation configuration -->
+    <context:annotation-config/>
+    <context:component-scan base-package="cc.cicadabear.security"/>
+    <!--
+        事务配置, 使用DataSource事务
+    -->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+
+    <!--
+        启用事务的注解支持
+    -->
+    <tx:annotation-driven transaction-manager="transactionManager"/>
+
+    <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+
+    <!-- 数据源 -->
+    <!--<bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">-->
+        <!--&lt;!&ndash; 数据源驱动类可不写，Druid默认会自动根据URL识别DriverClass &ndash;&gt;-->
+        <!--<property name="driverClassName" value="${jdbc.driver}"/>-->
+        <!--&lt;!&ndash; 基本属性 url、user、password &ndash;&gt;-->
+        <!--<property name="url" value="${jdbc.url}"/>-->
+        <!--<property name="username" value="${jdbc.username}"/>-->
+        <!--<property name="password" value="${jdbc.password}"/>-->
+
+        <!--&lt;!&ndash; 配置初始化大小、最小、最大 &ndash;&gt;-->
+        <!--<property name="initialSize" value="${druid.initialSize}"/>-->
+        <!--<property name="minIdle" value="${druid.minIdle}"/>-->
+        <!--<property name="maxActive" value="${druid.maxActive}"/>-->
+
+        <!--&lt;!&ndash; 配置获取连接等待超时的时间 &ndash;&gt;-->
+        <!--<property name="maxWait" value="${druid.maxWait}"/>-->
+        <!--&lt;!&ndash; 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒 &ndash;&gt;-->
+        <!--<property name="timeBetweenEvictionRunsMillis" value="${druid.timeBetweenEvictionRunsMillis}"/>-->
+
+        <!--&lt;!&ndash; 配置一个连接在池中最小生存的时间，单位是毫秒 &ndash;&gt;-->
+        <!--<property name="minEvictableIdleTimeMillis" value="${druid.minEvictableIdleTimeMillis}"/>-->
+
+        <!--<property name="validationQuery" value="${druid.validationQuery}"/>-->
+        <!--<property name="testWhileIdle" value="${druid.testWhileIdle}"/>-->
+        <!--<property name="testOnBorrow" value="${druid.testOnBorrow}"/>-->
+        <!--<property name="testOnReturn" value="${druid.testOnReturn}"/>-->
+        <!--<property name="removeAbandoned" value="${druid.removeAbandoned}"/>-->
+        <!--<property name="removeAbandonedTimeout" value="${druid.removeAbandonedTimeout}"/>-->
+        <!--<property name="logAbandoned" value="${druid.logAbandoned}"/>-->
+
+        <!--&lt;!&ndash; 打开PSCache，并且指定每个连接上PSCache的大小 oracle=true mysql=false &ndash;&gt;-->
+        <!--<property name="poolPreparedStatements" value="${druid.poolPreparedStatements}"/>-->
+        <!--<property name="maxPoolPreparedStatementPerConnectionSize"-->
+                  <!--value="${druid.maxPoolPreparedStatementPerConnectionSize}"/>-->
+
+        <!--&lt;!&ndash; 配置监控统计拦截的filters &ndash;&gt;-->
+        <!--<property name="filters" value="${druid.filters}"/>-->
+
+    <!--</bean>-->
+
+
+    <!--
+       通过AOP来配置声明式 DB事务(transaction).
+       service包中的 以 load, is 开头的方法是只读事务(read-only)
+       其他则全写事务(write)
+   -->
+    <!--aop-->
+    <aop:config>
+        <aop:advisor advice-ref="applicationAdvisor" pointcut="execution(* cc.cicadabear.security.service.*.*(..))"/>
+    </aop:config>
+
+    <!--advisor-->
+    <tx:advice id="applicationAdvisor" transaction-manager="transactionManager">
+        <tx:attributes>
+            <tx:method name="*" propagation="REQUIRED"/>
+            <tx:method name="load*" propagation="SUPPORTS" read-only="true"/>
+            <tx:method name="is*" propagation="SUPPORTS" read-only="true"/>
+        </tx:attributes>
+    </tx:advice>
+
+    <import resource="classpath:application-oauth-security-context.xml"/>
+</beans>

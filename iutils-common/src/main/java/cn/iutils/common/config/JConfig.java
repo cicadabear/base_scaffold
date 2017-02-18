@@ -38,6 +38,14 @@ public class JConfig {
         return value;
     }
 
+    public static Integer getInteger(String key) {
+        return Integer.valueOf(getConfig(key));
+    }
+
+    public static Boolean getBoolean(String key) {
+        return Boolean.valueOf(getConfig(key));
+    }
+
     public static final String CURRENT_USER = "user";
     public static final String SESSION_FORCE_LOGOUT_KEY = "session.force.logout";
     public static final String MESSAGE = "message";

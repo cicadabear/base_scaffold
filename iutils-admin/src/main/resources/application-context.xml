@@ -4,14 +4,10 @@
        xmlns:aop="http://www.springframework.org/schema/aop"
        xmlns:tx="http://www.springframework.org/schema/tx"
        xmlns:context="http://www.springframework.org/schema/context"
-       xmlns:util="http://www.springframework.org/schema/util"
-       xsi:schemaLocation="
-          http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
-          http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
-          http://www.springframework.org/schema/util
-          http://www.springframework.org/schema/util/spring-util.xsd">
+          http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
     <!--<bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">-->
     <!--<property name="locations">-->
@@ -34,11 +30,19 @@
     <!--<property name="properties" ref="properties"/>-->
     <!--</bean>-->
 
-    <util:properties id="properties" location="classpath:config.properties"/>
 
-    <context:property-placeholder location="classpath:config.properties"/>
-    <bean id="propertiesLoader" class="cn.iutils.common.utils.PropertiesLoader">
-        <constructor-arg ref="properties"/>
+    <context:property-placeholder
+            location="classpath:iutils.properties,classpath*:jiangren-oauth.properties,classpath*:jiangren-profile.properties"
+            ignore-unresolvable="true"/>
+
+    <bean id="propertiesLoader" class="cn.iutils.common.utils.PropertiesLoader" factory-method="getSingleton">
+        <property name="locations">
+            <value>
+                classpath:iutils.properties,
+                classpath*:jiangren-oauth.properties,
+                classpath*:jiangren-profile.properties
+            </value>
+        </property>
     </bean>
 
     <!-- 扫描注解Bean 采用自定义命名策略工具类 -->
@@ -122,6 +126,6 @@
     </bean>
 
     <!-- 导入shiro配置 -->
-    <import resource="classpath:spring-config-shiro.xml"/>
+    <import resource="classpath:application-context-shiro.xml"/>
 
 </beans>

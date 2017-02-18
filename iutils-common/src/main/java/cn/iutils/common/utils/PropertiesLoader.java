@@ -7,6 +7,7 @@ package cn.iutils.common.utils;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Properties;
 
@@ -34,47 +35,32 @@ public class PropertiesLoader {
 
     private static ResourceLoader resourceLoader = new DefaultResourceLoader();
 
-    private final Properties properties;
+    private final Properties properties = new Properties();
 
     private static PropertiesLoader singleton;
 
     public static PropertiesLoader getSingleton() {
-
         if (singleton == null) {
-            try {
-                throw new IllegalAccessException("PropertiesLoader has not already initialized .");
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-                System.exit(1);
-            }
+            singleton = new PropertiesLoader();
         }
         return singleton;
     }
 
-    public PropertiesLoader() {
-        if (singleton != null) {
-            try {
-                throw new IllegalAccessException("PropertiesLoader has already initialized .");
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-                System.exit(1);
-            }
-        }
-        singleton = this;
-        properties = new Properties();
+    private PropertiesLoader() {
+
     }
 
-    public PropertiesLoader(String... resourcesPaths) throws IllegalAccessException {
-        this();
-        loadProperties(properties, resourcesPaths);
-    }
+//    public PropertiesLoader(String... resourcesPaths) throws IllegalAccessException {
+//        this();
+//        loadProperties(properties, resourcesPaths);
+//    }
 
-    public PropertiesLoader(Properties... propertiess) {
-        this();
-        for (Properties properties : propertiess) {
-            this.properties.putAll(properties);
-        }
-    }
+//    public PropertiesLoader(Properties... propertiess) {
+//        this();
+//        for (Properties properties : propertiess) {
+//            this.properties.putAll(properties);
+//        }
+//    }
 
     public Properties getProperties() {
         return properties;
@@ -174,27 +160,47 @@ public class PropertiesLoader {
         return value != null ? Boolean.valueOf(value) : defaultValue;
     }
 
+    public void setLocations(Resource... locations) {
+        loadPropertiesFromResources(this.properties, locations);
+    }
+
+    public void setProperties(Properties properties) {
+        this.properties.putAll(properties);
+    }
+
+    public void setProperties(List<Properties> propertiess) {
+        for (Properties properties : propertiess)
+            this.properties.putAll(properties);
+    }
+
+    public void setProperties(String... propertiesPaths) {
+        loadProperties(this.properties, propertiesPaths);
+    }
+
     /**
      * 载入多个文件, 文件路径使用Spring Resource格式.
      */
-    private Properties loadProperties(Properties props, String... resourcesPaths) {
+    private void loadProperties(Properties props, String... resourcesPaths) {
 //        Properties props = new Properties();
 
         for (String location : resourcesPaths) {
 
 //			logger.debug("Loading properties file from:" + location);
+            Resource resource = resourceLoader.getResource(location);
+            loadPropertiesFromResources(props, resource);
+        }
+    }
 
+    private void loadPropertiesFromResources(Properties props, Resource... resources) {
+        for (Resource resource : resources) {
             InputStream is = null;
             try {
-                Resource resource = resourceLoader.getResource(location);
-                is = resource.getInputStream();
-                props.load(is);
+                props.load(resource.getInputStream());
             } catch (IOException ex) {
-                logger.info("Could not load properties from path:" + location + ", " + ex.getMessage());
+                logger.info("Could not load properties from path:" + resource.getFilename() + ", " + ex.getMessage());
             } finally {
                 IOUtils.closeQuietly(is);
             }
         }
-        return props;
     }
 }

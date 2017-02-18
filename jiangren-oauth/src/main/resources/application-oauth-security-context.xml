@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:security="http://www.springframework.org/schema/security"
+       xmlns:oauth="http://www.springframework.org/schema/security/oauth2"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+       http://www.springframework.org/schema/security
+       http://www.springframework.org/schema/security/spring-security-4.0.xsd
+       http://www.springframework.org/schema/security/oauth2
+       http://www.springframework.org/schema/security/spring-security-oauth2-2.0.xsd ">
+
+
+    <bean id="jdbcTokenStore" class="org.springframework.security.oauth2.provider.token.store.JdbcTokenStore">
+        <constructor-arg ref="dataSource"/>
+    </bean>
+    <bean id="defaultTokenServices" class="org.springframework.security.oauth2.provider.token.DefaultTokenServices">
+        <property name="tokenStore" ref="jdbcTokenStore"/>
+        <property name="supportRefreshToken" value="true"/>
+        <property name="accessTokenValiditySeconds" value="3600"/>
+        <property name="refreshTokenValiditySeconds" value="2592000"/>
+    </bean>
+    <bean id="customJdbcClientDetailsService"
+          class="cc.cicadabear.security.domain.oauth.CustomJdbcClientDetailsService">
+        <constructor-arg ref="dataSource"/>
+    </bean>
+    <!--自定义UserDetailService-->
+    <bean id="customUserDetailService" class="cc.cicadabear.security.domain.oauth.CustomUserDetailService"/>
+    <!-- ClientDetail 继承自 UserDetail 现在是将ClientDetail作为一种UserDetail用 都是 ID Secret -->
+    <bean id="clientDetailsUserDetailsService"
+          class="org.springframework.security.oauth2.provider.client.ClientDetailsUserDetailsService">
+        <constructor-arg ref="customJdbcClientDetailsService"/>
+    </bean>
+
+    <bean id="oauth2AuthenticationEntryPoint"
+          class="org.springframework.security.oauth2.provider.error.OAuth2AuthenticationEntryPoint"/>
+
+
+    <security:authentication-manager id="oauth2AuthenticationManager">
+        <security:authentication-provider user-service-ref="clientDetailsUserDetailsService"/>
+    </security:authentication-manager>
+
+    <bean id="customPasswordEncoder" class="cc.cicadabear.security.domain.oauth.CustomPasswordEncoder"/>
+
+    <bean id="saltSource" class="org.springframework.security.authentication.dao.ReflectionSaltSource">
+        <property name="userPropertyToUse" value="salt"/>
+    </bean>
+
+    <bean id="authenticationProvider" class="org.springframework.security.authentication.dao.DaoAuthenticationProvider">
+        <property name="saltSource" ref="saltSource"/>
+        <property name="userDetailsService" ref="customUserDetailService"/>
+        <property name="passwordEncoder" ref="customPasswordEncoder"/>
+    </bean>
+    <security:authentication-manager alias="authenticationManager">
+        <security:authentication-provider ref="authenticationProvider">
+
+        </security:authentication-provider>
+    </security:authentication-manager>
+
+    <bean id="oauth2AccessDeniedHandler"
+          class="org.springframework.security.oauth2.provider.error.OAuth2AccessDeniedHandler"/>
+
+    <bean id="auth2RequestFactory"
+          class="org.springframework.security.oauth2.provider.request.DefaultOAuth2RequestFactory">
+        <constructor-arg name="clientDetailsService" ref="customJdbcClientDetailsService"/>
+    </bean>
+
+    <bean id="oauthUserApprovalHandler" class="cc.cicadabear.security.infrastructure.OauthUserApprovalHandler">
+        <property name="tokenStore" ref="jdbcTokenStore"/>
+        <property name="clientDetailsService" ref="customJdbcClientDetailsService"/>
+        <property name="requestFactory" ref="auth2RequestFactory"/>
+        <property name="oauthService" ref="oauthService"/>
+    </bean>
+
+
+    <security:http pattern="/oauth/token" create-session="stateless" entry-point-ref="oauth2AuthenticationEntryPoint"
+                   authentication-manager-ref="oauth2AuthenticationManager" use-expressions="false">
+        <security:intercept-url pattern="/auth/token" access="IS_AUTHENTICATED_FULLY"/>
+        <security:anonymous enabled="false"/>
+        <security:http-basic entry-point-ref="oauth2AuthenticationEntryPoint"/>
+
+        <security:custom-filter ref="clientCredentialsTokenEndpointFilter" before="BASIC_AUTH_FILTER"/>
+        <security:access-denied-handler ref="oauth2AccessDeniedHandler"/>
+        <security:csrf disabled="true"/>
+    </security:http>
+
+    <!--
+        处理grant_type=client_credentials 的逻辑
+        只从请求中获取client_id与client_secret
+    -->
+    <bean id="clientCredentialsTokenEndpointFilter"
+          class="org.springframework.security.oauth2.provider.client.ClientCredentialsTokenEndpointFilter">
+        <property name="authenticationManager" ref="oauth2AuthenticationManager"/>
+    </bean>
+
+    <oauth:authorization-server client-details-service-ref="customJdbcClientDetailsService"
+                                token-services-ref="defaultTokenServices"
+                                user-approval-handler-ref="oauthUserApprovalHandler">
+        <oauth:authorization-code authorization-code-services-ref="jdbcAuthorizationCodeServices"/>
+        <oauth:implicit/>
+        <oauth:refresh-token/>
+        <oauth:client-credentials/>
+        <oauth:password/>
+    </oauth:authorization-server>
+
+    <bean id="oauth2AccessDecisionManager" class="org.springframework.security.access.vote.UnanimousBased">
+        <constructor-arg>
+            <list>
+                <bean class="org.springframework.security.oauth2.provider.vote.ScopeVoter"/>
+                <bean class="org.springframework.security.access.vote.RoleVoter"/>
+                <bean class="org.springframework.security.access.vote.AuthenticatedVoter"/>
+            </list>
+        </constructor-arg>
+    </bean>
+    <bean id="jdbcAuthorizationCodeServices"
+          class="cc.cicadabear.security.infrastructure.jdbc.SOSAuthorizationCodeServices">
+        <constructor-arg ref="dataSource"/>
+    </bean>
+
+</beans>

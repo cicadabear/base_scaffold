@@ -14,7 +14,7 @@
        http://www.springframework.org/schema/aop
        http://www.springframework.org/schema/aop/spring-aop.xsd">
 
-    <context:property-placeholder location="classpath:config.properties"/>
+    <context:property-placeholder location="classpath:iutils.properties"/>
 
     <!-- 开启controller注解支持 -->
     <context:component-scan base-package="cn.iutils.**.controller" use-default-filters="false">
