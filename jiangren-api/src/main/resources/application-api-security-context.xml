@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:security="http://www.springframework.org/schema/security"
+       xmlns:oauth="http://www.springframework.org/schema/security/oauth2"
+       xsi:schemaLocation="
+            http://www.springframework.org/schema/beans
+            http://www.springframework.org/schema/beans/spring-beans.xsd
+            http://www.springframework.org/schema/security
+            http://www.springframework.org/schema/security/spring-security-4.0.xsd
+            http://www.springframework.org/schema/security/oauth2
+            http://www.springframework.org/schema/security/spring-security-oauth2-2.0.xsd">
+
+    <oauth:resource-server id="resourceServiceFilter" token-services-ref="defaultTokenServices"/>
+
+
+    <security:http pattern="/api/**" create-session="never" entry-point-ref="oauth2AuthenticationEntryPoint"
+                   authentication-manager-ref="oauth2AuthenticationManager"
+                   access-decision-manager-ref="oauth2AccessDecisionManager" use-expressions="false">
+        <security:anonymous enabled="false"/>
+        <security:http-basic entry-point-ref="oauth2AuthenticationEntryPoint"/>
+
+        <!--<security:intercept-url pattern="/api/**" access="SCOPE_READ"/>-->
+
+        <security:custom-filter ref="resourceServiceFilter" before="PRE_AUTH_FILTER"/>
+        <security:access-denied-handler ref="oauth2AccessDeniedHandler"/>
+        <security:csrf disabled="true"/>
+    </security:http>
+
+    <security:global-method-security secured-annotations="enabled"/>
+
+
+    <!--&lt;!&ndash;http Authorization basic&ndash;&gt;-->
+
+    <!--<security:http request-matcher-ref="basicRequestMatcher" entry-point-ref="oauth2AuthenticationEntryPoint"-->
+    <!--create-session="never">-->
+    <!--<security:anonymous enabled="false"/>-->
+    <!--<security:csrf disabled="true"/>-->
+    <!--<security:http-basic/>-->
+    <!--<security:custom-filter ref="resourceServiceFilter" position="OPENID_FILTER"/>-->
+    <!--</security:http>-->
+
+    <!--<bean id="basicRequestMatcher" class="cc.cicadabear.security.common.BasicRequestMatcher"/>-->
+
+</beans>

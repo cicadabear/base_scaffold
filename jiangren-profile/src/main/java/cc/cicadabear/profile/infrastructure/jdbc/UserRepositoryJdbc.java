@@ -14,6 +14,7 @@ package cc.cicadabear.profile.infrastructure.jdbc;
 import cc.cicadabear.profile.domain.user.Privilege;
 import cc.cicadabear.profile.domain.user.User;
 import cc.cicadabear.profile.domain.user.UserRepository;
+import cn.iutils.common.Page;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
@@ -99,7 +100,7 @@ public class UserRepositoryJdbc implements UserRepository {
     }
 
     @Override
-    @CacheEvict(value = USER_CACHE, key = "#user.username()")
+    @CacheEvict(value = USER_CACHE, key = "#user.guid()")
     public void updateUser(final User user) {
         final String sql = " update user_ set username = ?, password = ?, phone = ?,email = ? where guid = ? ";
         this.jdbcTemplate.update(sql, ps -> {
@@ -128,6 +129,21 @@ public class UserRepositoryJdbc implements UserRepository {
         return user;
     }
 
+
+    @Override
+    @Cacheable(value = USER_CACHE, key = "#mobile")
+    public User findByMobile(String mobile) {
+        final String sql = " select * from user_ where phone = ? and archived = 0 ";
+        final List<User> list = this.jdbcTemplate.query(sql, new Object[]{mobile}, userRowMapper);
+
+        User user = null;
+        if (!list.isEmpty()) {
+            user = list.get(0);
+//            user.privileges().addAll(findPrivileges(user.id()));
+        }
+        return user;
+    }
+
     @Override
     public List<User> findUsersByUsername(String username) {
         String sql = " select * from user_ where archived = 0 ";
@@ -143,5 +159,70 @@ public class UserRepositoryJdbc implements UserRepository {
             user.privileges().addAll(findPrivileges(user.id()));
         }
         return list;
+    }
+
+    public List<User> findPage(Page<User> page) {
+
+        String sql = "SELECT * FROM user_ a";
+
+        sql += " where a.status = '0' ";
+
+        List<String> params = new ArrayList<>();
+
+        if (StringUtils.isNotEmpty(page.getEntity().username())) {
+            sql += " and username like CONCAT('%',?,'%') ";
+            params.add(page.getEntity().username());
+        }
+        if (StringUtils.isNotEmpty(page.getEntity().phone())) {
+            sql += " and phone like CONCAT('%', ?,'%')";
+            params.add(page.getEntity().phone());
+        }
+        final List<User> list = this.jdbcTemplate.query(sql, params.toArray(), userRowMapper);
+        return list;
+    }
+
+    public int count(Page<User> page) {
+        String sql = "SELECT count(1) FROM user_ a";
+
+        sql += " where a.status = '0' ";
+        List<String> params = new ArrayList<>();
+
+        if (StringUtils.isNotEmpty(page.getEntity().username())) {
+            sql += " and username like CONCAT('%', ?,'%') ";
+            params.add(page.getEntity().username());
+        }
+        if (StringUtils.isNotEmpty(page.getEntity().phone())) {
+            sql += " and phone like CONCAT('%', ?,'%')";
+            params.add(page.getEntity().phone());
+        }
+        int count = this.jdbcTemplate.queryForInt(sql, params.toArray());
+        return count;
+//
+//             <where>
+//                a.status = '0'
+//                <if test="page.entity.organizationId != null">
+//                and a.organization_id in(select id from sys_organization where parent_ids like '%${page.entity.organizationId}/%' or id=#{page.entity.organizationId})
+//			</if>
+//			<if test="page.entity.username!=null and page.entity.username!=''">
+//                and a.username LIKE
+//				<if test="page.entity.dbType == 'oracle'">'%'||#{page.entity.username}||'%')</if>
+//				<if test="page.entity.dbType == 'mssql'">'%'+#{page.entity.username}+'%')</if>
+//				<if test="page.entity.dbType == 'mysql'">CONCAT('%',#{page.entity.username},'%')</if>
+//	         </if>
+//			<if test="page.entity.name!=null and page.entity.name!=''">
+//                and a.name LIKE
+//				<if test="page.entity.dbType == 'oracle'">'%'||#{page.entity.name}||'%')</if>
+//				<if test="page.entity.dbType == 'mssql'">'%'+#{page.entity.name}+'%')</if>
+//				<if test="page.entity.dbType == 'mysql'">CONCAT('%',#{page.entity.name},'%')</if>
+//			</if>
+//			<if test="page.entity.mobile!=null and page.entity.mobile!=''">
+//                and a.mobile LIKE
+//				<if test="page.entity.dbType == 'oracle'">'%'||#{page.entity.mobile}||'%')</if>
+//				<if test="page.entity.dbType == 'mssql'">'%'+#{page.entity.mobile}+'%')</if>
+//				<if test="page.entity.dbType == 'mysql'">CONCAT('%',#{page.entity.mobile},'%')</if>
+//			</if>
+//        </where>
+
+
     }
 }

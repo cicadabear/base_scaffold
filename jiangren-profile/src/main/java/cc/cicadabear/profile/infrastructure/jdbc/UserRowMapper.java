@@ -43,6 +43,8 @@ public class UserRowMapper implements RowMapper<User> {
 
         user.password(rs.getString("password"));
         user.salt(rs.getString("salt"));
+        user.setLocked(rs.getInt("locked"));
+        user.setStatus(rs.getInt("status"));
         user.username(rs.getString("username"));
 
         user.lastLoginTime(rs.getTimestamp("last_login_time"));

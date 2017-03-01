@@ -15,7 +15,7 @@
     <dependencies>
         <dependency>
             <groupId>cc.cicadabear</groupId>
-            <artifactId>iutils-common</artifactId>
+            <artifactId>jiangren-common</artifactId>
             <version>1.0</version>
         </dependency>
         <dependency>

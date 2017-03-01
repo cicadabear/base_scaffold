@@ -34,7 +34,7 @@ public class UserFormDto extends UserDto {
         this.password = password;
     }
 
-    public User newUser() {
+    public User user() {
         final User user = new User()
                 .username(getUsername())
                 .phone(getPhone())

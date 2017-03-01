@@ -8,6 +8,8 @@ import cc.cicadabear.profile.domain.shared.security.WdcyUserDetails;
 import cc.cicadabear.profile.domain.user.User;
 import cc.cicadabear.profile.domain.user.UserRepository;
 import cc.cicadabear.profile.service.UserService;
+import cn.iutils.common.Page;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.security.core.Authentication;
@@ -59,12 +61,26 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public boolean isExistedMobile(String mobile) {
+        final User user = userRepository.findByMobile(mobile);
+        return user != null;
+    }
+
+    @Override
     public String saveUser(UserFormDto formDto) {
-        User user = formDto.newUser();
-        userRepository.saveUser(user);
+        User user = formDto.user();
+        if (StringUtils.isNotEmpty(user.guid())) {
+            userRepository.updateUser(user);
+        } else {
+            userRepository.saveUser(user);
+        }
         return user.guid();
     }
 
+    @Override
+    public User loadUserByMobile(String mobile) {
+        return userRepository.findByMobile(mobile);
+    }
 
     private UserJsonDto loadOauthUserJsonDto(OAuth2Authentication oAuth2Authentication) {
         UserJsonDto userJsonDto = new UserJsonDto();
@@ -76,5 +92,16 @@ public class UserServiceImpl implements UserService {
         }
 
         return userJsonDto;
+    }
+
+    /**
+     * 查询分页数据
+     *
+     * @param page
+     * @return
+     */
+    public List<User> findPage(Page<User> page) {
+        page.setTotal(userRepository.count(page));
+        return userRepository.findPage(page);
     }
 }

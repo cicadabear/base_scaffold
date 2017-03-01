@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cc.cicadabear.business.domain.dao.IValiCodeDao">
+
+    <sql id="valiCodeColumns">
+    	a.id,
+    	a.code,
+    	a.type,
+    	a.target,
+		a.expire_time as "expireTime",
+		a.create_date as "createDate",
+		a.update_date as "updateDate",
+		a.status as "status"
+    </sql>
+
+
+    <select id="getValiCodeByMobile" resultType="ValiCode" timeout="1200">
+        select
+        <include refid="valiCodeColumns"/>
+        from valicode a
+        where a.status='0' and a.target=#{mobile}
+    </select>
+
+    <select id="get" resultType="ValiCode">
+        SELECT
+        <include refid="valiCodeColumns"/>
+        FROM valicode a
+        WHERE a.id = #{id}
+    </select>
+
+
+    <select id="findPage" resultType="ValiCode">
+        SELECT
+        <include refid="valiCodeColumns"/>
+        FROM valicode a
+        <where>
+            a.status = '0'
+            <if test="page.entity.target!=null and page.entity.target!=''">
+                and a.target LIKE
+                <if test="page.entity.dbType == 'oracle'">'%'||#{page.entity.target}||'%')</if>
+                <if test="page.entity.dbType == 'mssql'">'%'+#{page.entity.target}+'%')</if>
+                <if test="page.entity.dbType == 'mysql'">CONCAT('%',#{page.entity.target},'%')</if>
+            </if>
+        </where>
+        <if test="page.orderBy!=''">
+            ORDER BY ${page.orderBy} LIMIT ${page.pageNo*page.pageSize},${page.pageSize}
+        </if>
+    </select>
+
+    <insert id="insert">
+		insert into valicode (code,target, type, expire_time,error_times,create_date,update_date)
+	    values(#{code},#{target},#{type},#{expireTime},#{errorTimes},#{createDate},#{updateDate})
+	</insert>
+
+    <update id="update">
+		update valicode set code=#{code},target=#{target},type=#{type},error_times=#{errorTimes},create_date=#{createDate},update_date=#{updateDate}
+		where id=#{id}
+	</update>
+
+    <delete id="softDelete" flushCache="true">
+		update valicode set status='1' where id=#{id}
+	</delete>
+    <delete id="delete">
+        delete from valicode where id=#{id}
+    </delete>
+
+</mapper>

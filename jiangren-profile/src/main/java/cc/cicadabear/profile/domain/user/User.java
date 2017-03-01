@@ -17,13 +17,15 @@ public class User extends AbstractDomain {
 
     private static final long serialVersionUID = -2921689304753120556L;
 
-
+    private int id;
     private String username;
     private String password;
     private String salt;
 
     private String phone;
     private String email;
+    private boolean locked;
+    private int status;
     //Default user is initial when create database, do not delete
     private boolean defaultUser = false;
 
@@ -42,12 +44,44 @@ public class User extends AbstractDomain {
         this.email = email;
     }
 
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
     public boolean defaultUser() {
         return defaultUser;
     }
 
     public String username() {
         return username;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public void setMobile(String phone) {
+        this.phone = phone;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String password() {
@@ -64,6 +98,27 @@ public class User extends AbstractDomain {
 
     public String email() {
         return email;
+    }
+
+
+    public boolean getLocked() {
+        return locked;
+    }
+
+    public void setLocked(int locked) {
+        this.locked = (locked == 1);
+    }
+
+    public boolean isLocked() {
+        return this.locked;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
     }
 
     public List<Privilege> privileges() {

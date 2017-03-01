@@ -1,6 +1,7 @@
 package cc.cicadabear.profile.domain.user;
 
 import cc.cicadabear.profile.domain.shared.Repository;
+import cn.iutils.common.Page;
 
 import java.util.List;
 
@@ -18,5 +19,12 @@ public interface UserRepository extends Repository {
 
     User findByUsername(String username);
 
+    User findByMobile(String mobile);
+
     List<User> findUsersByUsername(String username);
+
+    List<User> findPage(Page<User> page);
+
+    int count(Page<User> page);
+
 }

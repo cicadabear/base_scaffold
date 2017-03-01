@@ -5,20 +5,16 @@
        xmlns:tx="http://www.springframework.org/schema/tx" xmlns:aop="http://www.springframework.org/schema/aop"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
        http://www.springframework.org/schema/beans/spring-beans.xsd
-
-
-
-
        http://www.springframework.org/schema/context
        http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
 
 
     <!--<util:properties location="persistence.properties,jiangren-oauth.properties"/>-->
-    <context:property-placeholder location="classpath:jiangren-profile.properties" ignore-unresolvable="true"/>
+    <!--<context:property-placeholder location="classpath:jiangren-profile.properties" ignore-unresolvable="true"/>-->
 
-    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-        <property name="locations" value="classpath:jiangren-profile.properties"/>
-    </bean>
+    <!--<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">-->
+    <!--<property name="locations" value="classpath:jiangren-profile.properties"/>-->
+    <!--</bean>-->
     <!--annotation configuration -->
     <context:annotation-config/>
     <context:component-scan base-package="cc.cicadabear.profile"/>
@@ -99,6 +95,6 @@
             <tx:method name="is*" propagation="SUPPORTS" read-only="true"/>
         </tx:attributes>
     </tx:advice>
-
+    <import resource="application-profile-cache-context.xml"/>
 
 </beans>

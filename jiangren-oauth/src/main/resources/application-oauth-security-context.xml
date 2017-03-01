@@ -53,9 +53,7 @@
         <property name="passwordEncoder" ref="customPasswordEncoder"/>
     </bean>
     <security:authentication-manager alias="authenticationManager">
-        <security:authentication-provider ref="authenticationProvider">
-
-        </security:authentication-provider>
+        <security:authentication-provider ref="authenticationProvider"/>
     </security:authentication-manager>
 
     <bean id="oauth2AccessDeniedHandler"
@@ -76,7 +74,7 @@
 
     <security:http pattern="/oauth/token" create-session="stateless" entry-point-ref="oauth2AuthenticationEntryPoint"
                    authentication-manager-ref="oauth2AuthenticationManager" use-expressions="false">
-        <security:intercept-url pattern="/auth/token" access="IS_AUTHENTICATED_FULLY"/>
+        <security:intercept-url pattern="/oauth/token" access="IS_AUTHENTICATED_FULLY"/>
         <security:anonymous enabled="false"/>
         <security:http-basic entry-point-ref="oauth2AuthenticationEntryPoint"/>
 
@@ -85,6 +83,21 @@
         <security:csrf disabled="true"/>
     </security:http>
 
+
+    <!--<bean id="testFilter" class="cc.cicadabear.security.filter.TestFilter"/>-->
+    <!--<bean id="customAuthenticationEntryPoint"-->
+          <!--class="cc.cicadabear.security.common.CustomAuthenticationEntryPoint"/>-->
+
+
+    <!--<security:http pattern="/oauth/test/*" create-session="stateless" use-expressions="false">-->
+        <!--<security:form-login/>-->
+        <!--<security:intercept-url pattern="/oauth/test/a" access="IS_AUTHENTICATED_FULLY"/>-->
+        <!--<security:intercept-url pattern="/oauth/test/ab" access="IS_AUTHENTICATED_FULLY"/>-->
+        <!--<security:intercept-url pattern="/oauth/test/ac" access="IS_AUTHENTICATED_FULLY"/>-->
+        <!--<security:intercept-url pattern="/oauth/test/ad" access="IS_AUTHENTICATED_FULLY"/>-->
+        <!--<security:http-basic/>-->
+        <!--<security:custom-filter ref="testFilter" position="FIRST"/>-->
+    <!--</security:http>-->
     <!--
         处理grant_type=client_credentials 的逻辑
         只从请求中获取client_id与client_secret
@@ -117,5 +130,6 @@
           class="cc.cicadabear.security.infrastructure.jdbc.SOSAuthorizationCodeServices">
         <constructor-arg ref="dataSource"/>
     </bean>
+
 
 </beans>
