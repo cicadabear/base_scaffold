@@ -33,7 +33,7 @@ public class TestController {
     String str;
 
     @Secured("ROLE_CLIENT")
-    @RequestMapping(value = "/test", method = RequestMethod.POST)
+    @RequestMapping(value = "/test")
     public Object test() {
         System.out.println("=========test");
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

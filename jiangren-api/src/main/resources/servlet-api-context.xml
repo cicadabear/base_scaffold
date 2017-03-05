@@ -20,7 +20,6 @@
 
     <aop:config/>
 
-
     <context:property-placeholder location="classpath:jiangren-api.properties,classpath*:jiangren-profile.properties"
                                   ignore-unresolvable="true"/>
 

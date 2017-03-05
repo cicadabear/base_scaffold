@@ -6,15 +6,17 @@
         version="3.0"
         metadata-complete="true">
 
-    <display-name>iutils-admin</display-name>
+    <display-name>jiangren-admin</display-name>
 
     <!-- Spring配置文件开始  -->
     <context-param>
         <param-name>contextConfigLocation</param-name>
         <param-value>
             classpath:application-context.xml
+            classpath*:application-api-context.xml
             classpath*:application-oauth-context.xml
             classpath*:application-profile-context.xml
+            classpath*:application-business-context.xml
         </param-value>
     </context-param>
     <listener>
@@ -66,20 +68,25 @@
             <param-value>true</param-value>
         </init-param>
     </filter>
+    <filter-mapping>
+        <filter-name>shiroFilter</filter-name>
+        <url-pattern>/admin/*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+    </filter-mapping>
+    <!--springSecurityFilter-->
     <filter>
         <filter-name>springSecurityFilterChain</filter-name>
         <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
     </filter>
-
     <filter-mapping>
-        <filter-name>shiroFilter</filter-name>
-        <url-pattern>/*</url-pattern>
-        <dispatcher>REQUEST</dispatcher>
+        <filter-name>springSecurityFilterChain</filter-name>
+        <url-pattern>/api/*</url-pattern>
     </filter-mapping>
     <filter-mapping>
         <filter-name>springSecurityFilterChain</filter-name>
         <url-pattern>/oauth/*</url-pattern>
     </filter-mapping>
+
 
     <servlet>
         <servlet-name>spring</servlet-name>
@@ -87,7 +94,8 @@
         <init-param>
             <param-name>contextConfigLocation</param-name>
             <param-value>
-                classpath:servlet-context.xml,
+                classpath:servlet-context.xml
+                classpath*:servlet-api-context.xml
                 classpath*:servlet-oauth-context.xml
             </param-value>
         </init-param>
