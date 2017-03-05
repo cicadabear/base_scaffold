@@ -6,9 +6,9 @@
         <version>1.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>jiangren-common</artifactId>
+    <artifactId>jiangren-admin-common</artifactId>
     <packaging>jar</packaging>
-    <name>jiangren-common</name>
+    <name>jiangren-admin-common</name>
     <url>http://maven.apache.org</url>
     <dependencies>
         <dependency>
@@ -28,7 +28,7 @@
         </dependency>
     </dependencies>
     <build>
-        <finalName>jiangren-common</finalName>
+        <finalName>jiangren-admin-common</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

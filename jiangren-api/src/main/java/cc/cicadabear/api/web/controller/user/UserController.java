@@ -28,8 +28,8 @@ import javax.servlet.ServletContext;
 /**
  * Created by Jack on 2/20/17.
  */
-@RestController
-@RequestMapping("${restPath}/user")
+@RestController("cc.cicadabear.api.web.controller.user.UserController")
+@RequestMapping("/user")
 @ResponseBody
 public class UserController {
 

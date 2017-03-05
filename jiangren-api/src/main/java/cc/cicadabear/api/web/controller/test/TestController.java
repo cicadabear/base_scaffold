@@ -16,8 +16,8 @@ import javax.annotation.PostConstruct;
 /**
  * Created by Jack on 2/23/17.
  */
-@RestController
-@RequestMapping("${restPath}/test")
+@RestController("cc.cicadabear.api.web.controller.test.TestController")
+@RequestMapping("/test")
 @ResponseBody
 public class TestController {
 

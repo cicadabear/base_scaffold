@@ -17,7 +17,6 @@
     <context:property-placeholder location="classpath:jiangren-admin.properties"/>
 
 
-
     <!-- 开启controller注解支持 -->
     <context:component-scan base-package="cn.iutils.**.controller" use-default-filters="false">
         <context:include-filter type="annotation"
@@ -91,6 +90,7 @@
         <property name="exceptionMappings">
             <props>
                 <prop key="org.apache.shiro.authz.UnauthorizedException">error/403</prop>
+                <prop key="org.springframework.web.servlet.PageNotFound">error/404</prop>
                 <prop key="java.lang.Throwable">error/500</prop>
             </props>
         </property>

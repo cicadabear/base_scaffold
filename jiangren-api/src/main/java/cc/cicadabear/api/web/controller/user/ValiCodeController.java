@@ -15,7 +15,8 @@ import org.springframework.web.bind.annotation.*;
  * Created by Jack on 2/20/17.
  */
 @RestController
-@RequestMapping(value = "${restPath}/sms", method = RequestMethod.POST)
+//@RequestMapping(value = "${restPath}/sms", method = RequestMethod.POST)
+@RequestMapping(value = "/sms", method = RequestMethod.POST)
 @ResponseBody
 public class ValiCodeController {
 

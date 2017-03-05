@@ -12,12 +12,13 @@
         在使用时使用Spring cache 注解,如 @Cacheable
         ehcache.xml 配置主要的缓存设置
     -->
-    <cache:annotation-driven/>
+    <!--<cache:annotation-driven cache-manager="profileCacheManager"/>-->
 
-    <!-- cache manager -->
-    <bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheCacheManager" p:cacheManager-ref="ehcache"/>
+    <!--&lt;!&ndash; cache manager &ndash;&gt;-->
+    <!--<bean id="profileCacheManager" class="org.springframework.cache.ehcache.EhCacheCacheManager"-->
+          <!--p:cacheManager-ref="profileEhcache"/>-->
 
-    <bean class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean" id="ehcache"
-          p:configLocation="classpath:ehcache.xml" p:shared="true"/>
+    <!--<bean class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean" id="profileEhcache"-->
+          <!--p:configLocation="classpath:ehcache.xml" p:shared="true"/>-->
 
 </beans>

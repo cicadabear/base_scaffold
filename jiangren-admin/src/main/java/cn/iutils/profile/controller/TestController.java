@@ -14,7 +14,7 @@ import javax.servlet.ServletResponse;
 /**
  * Created by Jack on 2/28/17.
  */
-@Controller
+@Controller("cn.iutils.profile.controller.TestController")
 @RequestMapping("${adminPath}/test")
 public class TestController {
     Logger logger = LoggerFactory.getLogger(TestController.class.getName());

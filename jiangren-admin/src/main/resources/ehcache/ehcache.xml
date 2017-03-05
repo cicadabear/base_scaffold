@@ -4,6 +4,21 @@
 
     <diskStore path="java.io.tmpdir"/>
 
+
+
+    <!--<cache name="clientDetailsCache"-->
+           <!--maxElementsInMemory="10000"-->
+           <!--eternal="false"-->
+           <!--timeToIdleSeconds="240"-->
+           <!--timeToLiveSeconds="240"-->
+           <!--overflowToDisk="true"-->
+           <!--maxElementsOnDisk="10000000"-->
+           <!--diskPersistent="false"-->
+           <!--diskExpiryThreadIntervalSeconds="240"-->
+           <!--memoryStoreEvictionPolicy="LRU"/>-->
+
+
+
     <!-- 登录记录缓存 锁定10分钟 -->
     <cache name="passwordRetryCache"
            maxEntriesLocalHeap="2000"
@@ -40,5 +55,4 @@
            overflowToDisk="false"
            statistics="true">
     </cache>
-
 </ehcache>

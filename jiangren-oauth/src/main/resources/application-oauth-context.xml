@@ -102,7 +102,7 @@
         </tx:attributes>
     </tx:advice>
 
-    <import resource="application-oauth-security-context.xml"/>
-    <import resource="application-oauth-cache-context.xml"/>
+    <import resource="classpath:application-oauth-security-context.xml"/>
+    <import resource="classpath:application-oauth-cache-context.xml"/>
 
 </beans>

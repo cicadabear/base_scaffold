@@ -18,7 +18,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-@Controller
+@Controller("cn.iutils.sys.controller.UserController")
 @RequestMapping("${adminPath}/user")
 public class UserController extends BaseController {
 

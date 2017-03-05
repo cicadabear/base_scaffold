@@ -13,10 +13,10 @@
         <param-name>contextConfigLocation</param-name>
         <param-value>
             classpath:application-context.xml
-            classpath*:application-api-context.xml
             classpath*:application-oauth-context.xml
             classpath*:application-profile-context.xml
             classpath*:application-business-context.xml
+            classpath*:application-api-context.xml
         </param-value>
     </context-param>
     <listener>
@@ -95,7 +95,6 @@
             <param-name>contextConfigLocation</param-name>
             <param-value>
                 classpath:servlet-context.xml
-                classpath*:servlet-api-context.xml
                 classpath*:servlet-oauth-context.xml
             </param-value>
         </init-param>
@@ -105,6 +104,24 @@
     <servlet-mapping>
         <servlet-name>spring</servlet-name>
         <url-pattern>/</url-pattern>
+    </servlet-mapping>
+
+
+    <servlet>
+        <servlet-name>api</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <init-param>
+            <param-name>contextConfigLocation</param-name>
+            <param-value>
+                classpath*:servlet-api-context.xml
+            </param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+        <async-supported>true</async-supported>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>api</servlet-name>
+        <url-pattern>/api/*</url-pattern>
     </servlet-mapping>
 
     <!-- druid监控配置 -->
@@ -125,10 +142,10 @@
         <session-timeout>60</session-timeout>
     </session-config>
 
-    <error-page>
-        <error-code>500</error-code>
-        <location>/WEB-INF/view/error/500.jsp</location>
-    </error-page>
+    <!--<error-page>-->
+    <!--<error-code>500</error-code>-->
+    <!--<location>/WEB-INF/view/error/500.jsp</location>-->
+    <!--</error-page>-->
     <error-page>
         <error-code>404</error-code>
         <location>/WEB-INF/view/error/404.jsp</location>
