@@ -23,6 +23,8 @@ public interface UserService {
 
     String saveUser(UserFormDto formDto);
 
+    String saveUser(User user);
+
     User loadUserByMobile(String mobile);
 
     List<User> findPage(Page<User> page);

@@ -13,6 +13,15 @@
 
     <oauth:resource-server id="resourceServiceFilter" token-services-ref="defaultTokenServices"/>
 
+    <security:http pattern="/api/test2/**" create-session="never" entry-point-ref="oauth2AuthenticationEntryPoint"
+                   use-expressions="false">
+        <security:anonymous enabled="true"/>
+
+        <security:intercept-url pattern="/api/test/*" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
+
+        <security:access-denied-handler ref="oauth2AccessDeniedHandler"/>
+        <security:csrf disabled="true"/>
+    </security:http>
 
     <security:http pattern="/api/**" create-session="never" entry-point-ref="oauth2AuthenticationEntryPoint"
                    authentication-manager-ref="oauth2AuthenticationManager"
@@ -20,6 +29,7 @@
         <security:anonymous enabled="false"/>
         <security:http-basic entry-point-ref="oauth2AuthenticationEntryPoint"/>
 
+        <security:intercept-url pattern="/api/test/*" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
         <!--<security:intercept-url pattern="/api/**" access="SCOPE_READ"/>-->
 
         <security:custom-filter ref="resourceServiceFilter" before="PRE_AUTH_FILTER"/>

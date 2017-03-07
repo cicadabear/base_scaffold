@@ -78,6 +78,16 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public String saveUser(User user) {
+        if (StringUtils.isNotEmpty(user.guid())) {
+            userRepository.updateUser(user);
+        } else {
+            userRepository.saveUser(user);
+        }
+        return user.guid();
+    }
+
+    @Override
     public User loadUserByMobile(String mobile) {
         return userRepository.findByMobile(mobile);
     }

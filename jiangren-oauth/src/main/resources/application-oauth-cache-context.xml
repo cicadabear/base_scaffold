@@ -20,7 +20,7 @@
           p:cacheManager-ref="securityEhcache"/>
 
     <bean class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean" name="securityEhcache"
-          id="securityEhcache"
+          id="securityEhcache" 
           p:configLocation="classpath:oauth-ehcache.xml" p:cacheManagerName="securityEhcache"/>
 
 

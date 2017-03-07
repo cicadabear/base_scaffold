@@ -109,6 +109,8 @@ public class UserController {
         formDto.setServletContext(context);
         formDto.setUser(user);
         userService.saveUser(formDto);
+
+        SecurityHolder.revokeAllAccessTokenOfCurrentUser(context);
         //返回信息
         resultVo.setCode(HttpStatus.SC_OK);
         resultVo.fail(false);

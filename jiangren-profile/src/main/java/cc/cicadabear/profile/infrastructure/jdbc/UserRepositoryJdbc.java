@@ -19,6 +19,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -41,6 +42,12 @@ public class UserRepositoryJdbc implements UserRepository {
 
 
     private static UserRowMapper userRowMapper = new UserRowMapper();
+
+
+    public static final String CACHE_KEY_PREFIX_USERNAME = "username_";
+    public static final String CACHE_KEY_PREFIX_MOBILE = "mobile_";
+    public static final String CACHE_KEY_PREFIX_EMAIL = "email_";
+
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
@@ -100,7 +107,10 @@ public class UserRepositoryJdbc implements UserRepository {
     }
 
     @Override
-    @CacheEvict(value = USER_CACHE, key = "#user.guid()")
+    @Caching(evict = {
+            @CacheEvict(value = USER_CACHE, key = "#root.targetClass.CACHE_KEY_PREFIX_MOBILE + #user.phone"),
+            @CacheEvict(value = USER_CACHE, key = "#root.targetClass.CACHE_KEY_PREFIX_USERNAME + #user.username")
+    })
     public void updateUser(final User user) {
         final String sql = " update user_ set username = ?, password = ?, phone = ?,email = ? where guid = ? ";
         this.jdbcTemplate.update(sql, ps -> {
@@ -115,7 +125,7 @@ public class UserRepositoryJdbc implements UserRepository {
     }
 
     @Override
-    @Cacheable(value = USER_CACHE, key = "#username")
+    @Cacheable(value = USER_CACHE, key = "#root.targetClass.CACHE_KEY_PREFIX_USERNAME + #username")
     public User findByUsername(String username) {
         final String sql = " select * from user_ where username = ? and archived = 0 ";
         final List<User> list = this.jdbcTemplate.query(sql, new Object[]{username}, userRowMapper);
@@ -131,7 +141,7 @@ public class UserRepositoryJdbc implements UserRepository {
 
 
     @Override
-    @Cacheable(value = USER_CACHE, key = "#mobile")
+    @Cacheable(value = USER_CACHE, key = "#root.targetClass.CACHE_KEY_PREFIX_MOBILE + #mobile")
     public User findByMobile(String mobile) {
         final String sql = " select * from user_ where phone = ? and archived = 0 ";
         final List<User> list = this.jdbcTemplate.query(sql, new Object[]{mobile}, userRowMapper);
